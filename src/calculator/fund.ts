@@ -29,24 +29,21 @@ export function calculateInsuranceAndFund ({
     const result: IInsuranceAndFundResult = {
         totalFund: 0,
     } as any;
+    
+    let countBaseSalary = insuranceAndFundBase;
+    if (insuranceAndFundBase < housingFundRange.min) {
+        countBaseSalary = housingFundRange.min;
+    } else if (insuranceAndFundBase > housingFundRange.max) {
+        countBaseSalary = housingFundRange.max;
+    }
 
     for (const k in insuranceAndFundRate) {
-
         const key = k as keyof IInsuranceAndFundResult;
-        let countBaseSalary = insuranceAndFundBase;
-
-        if (key === 'housingFund' || key === 'supplementaryFund') {
-            if (insuranceAndFundBase < housingFundRange.min) {
-                countBaseSalary = housingFundRange.min;
-            } else if (insuranceAndFundBase > housingFundRange.max) {
-                countBaseSalary = housingFundRange.max;
-            }
-        }
-
         const value = (insuranceAndFundRate as any)[key] * countBaseSalary;
         result[key] = value;
         result.totalFund += value;
     }
+    
     result.totalHousingFund = result.housingFund + result.supplementaryFund;
     return result;
 }
